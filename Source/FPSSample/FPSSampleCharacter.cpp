@@ -38,7 +38,8 @@ AFPSSampleCharacter::AFPSSampleCharacter()
 	FP_Gun->SetOnlyOwnerSee(true);			// only the owning player will see this mesh
 	FP_Gun->bCastDynamicShadow = false;
 	FP_Gun->CastShadow = false;
-	FP_Gun->AttachTo(Mesh1P, TEXT("GripPoint"), EAttachLocation::SnapToTargetIncludingScale, true);
+	//FP_Gun->AttachTo(Mesh1P, TEXT("GripPoint"), EAttachLocation::SnapToTargetIncludingScale, true);
+	FP_Gun->AttachParent = Mesh1P;
 
 
 	// Default offset from the character location for projectiles to spawn
@@ -214,4 +215,25 @@ bool AFPSSampleCharacter::EnableTouchscreenMovement(class UInputComponent* Input
 		InputComponent->BindTouch(EInputEvent::IE_Repeat, this, &AFPSSampleCharacter::TouchUpdate);
 	}
 	return bResult;
+}
+
+void AFPSSampleCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	MergeGunMesh();
+}
+
+
+// Takes care of merging the gun into the arms mesh
+void AFPSSampleCharacter::MergeGunMesh()
+{
+	UE_LOG(LogTemp, Log, TEXT("merge gun mesh called"));
+
+	// very quick
+	FP_Gun->SetHiddenInGame(false);
+	FP_Gun->AttachTo(Mesh1P, NAME_None, EAttachLocation::SnapToTarget);
+	FP_Gun->SetMasterPoseComponent(Mesh1P);
+	FP_Gun->MeshComponentUpdateFlag = EMeshComponentUpdateFlag::AlwaysTickPose; // needed for anims
+	FP_Gun->LastRenderTime = GetWorld()->TimeSeconds;
+	FP_Gun->bRecentlyRendered = true;
 }

@@ -10,6 +10,9 @@ class AFPSSampleCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
+	/** spawn inventory, setup initial variables */
+	virtual void PostInitializeComponents() override;
+
 	/** Pawn mesh: 1st person view (arms; seen only by self) */
 	UPROPERTY(VisibleDefaultsOnly, Category=Mesh)
 	class USkeletalMeshComponent* Mesh1P;
@@ -49,7 +52,11 @@ public:
 	class UAnimMontage* FireAnimation;
 
 protected:
+
+	class AFPSSampleCharacter* MyPawn;
 	
+	virtual void MergeGunMesh();
+
 	/** Fires a projectile. */
 	void OnFire();
 
